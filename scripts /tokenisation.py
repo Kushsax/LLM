@@ -1,3 +1,5 @@
+# TIKTOKEN DOES THIS WHOLE SCRIPT
+
 import re 
 import tiktoken as tk
 

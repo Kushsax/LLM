@@ -2,7 +2,7 @@ import tiktoken as tk
 from torch.utils.data import Dataset, DataLoader
 import torch
 
-with open('the-verdict.txt', 'r') as f:
+with open('../the-verdict.txt', 'r') as f:
   text = f.read()
 
 class DataSet(Dataset):

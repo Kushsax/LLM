@@ -5,9 +5,6 @@ torch.manual_seed(44)
 import os
 torch.set_num_threads(os.cpu_count()) 
 import tiktoken as tk
-import math
-
-
 
 class LayerNormalisation(nn.Module):
   def __init__(self,token_dim):
@@ -117,6 +114,18 @@ def tokens_to_text(tokens,tokenizer):
   dec = tokenizer.decode(dec)
   return dec
 
+def cross_entropy_loss(inputs,targets,model):
+  logits = model(inputs)
+  probas = torch.softmax(logits,dim=-1)
+  in_idx = 0 
+  probas1 = probas[in_idx,[0,1,2],targets[in_idx]]
+
+  in_idx = 1
+  probas2 = probas[in_idx,[0,1,2],targets[in_idx]]
+  target_probas = torch.cat((probas1,probas2))
+  log_probas = torch.log(target_probas)
+  neg_avg_log_probas = -torch.mean(log_probas)
+  return neg_avg_log_probas
 
 
 cfg = {
@@ -131,31 +140,16 @@ cfg = {
 inputs = torch.tensor([[16833,3626,6100],[40,1107,588]])
 targets = torch.tensor([[3626,6100,345],[1107,588,11311]])
 
+model = GPT(cfg)
+res = cross_entropy_loss(inputs,targets,model)
+#print(res)
+
+logits = model(inputs)
+logits_flat = logits.flatten(0,1)
 targets_flat = targets.flatten()
 
-model = GPT(cfg)
-logits = model(inputs)
-
-logits_flat = logits.flatten(0,1)
-
-probas = torch.softmax(logits,dim=-1)
-
-token_ids = torch.argmax(targets,dim=-1,keepdim=True)
-print(token_ids)
-
-in_idx = 0 
-probas1 = probas[in_idx,[0,1,2],token_ids[in_idx]]
-
-in_idx = 1
-probas2 = probas[in_idx,[0,1,2],token_ids[in_idx]]
-
-target_probas = torch.cat((probas1,probas2))
-log_probas = torch.log(target_probas)
-neg_avg_log_probas = -torch.mean(log_probas)
-# print(neg_avg_log_probas)
-
 loss = torch.nn.functional.cross_entropy(logits_flat,targets_flat)
-# print(loss)
+#print(loss)
 
 
 
