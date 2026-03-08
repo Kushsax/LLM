@@ -1,0 +1,29 @@
+# Python cache
+
+**pycache**/
+*.py[cod]
+
+# Virtual environment
+
+.venv/
+
+# macOS
+
+.DS_Store
+
+# Editor
+
+.vscode/
+
+# Model checkpoints / weights
+
+*.pt
+*.pth
+*.ckpt
+
+# Logs
+
+*.log
+
+# text 
+the-verdict.txt
